@@ -4,149 +4,169 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
   <title>Planaz · Student Planner</title>
-  <!-- Font Awesome 6 -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <!-- Favicon -->
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' fill='%233b82f6' rx='20'/%3E%3Cpath d='M25 30 L45 30 L45 70 L25 70 Q20 70 20 65 L20 35 Q20 30 25 30' fill='white' opacity='0.9'/%3E%3Crect x='48' y='35' width='25' height='35' rx='4' fill='white' opacity='0.9'/%3E%3Ccircle cx='70' cy='52' r='12' fill='none' stroke='white' stroke-width='4' /%3E%3Cpath d='M70 46 L70 54 L76 58' stroke='white' stroke-width='4' fill='none' /%3E%3Cpath d='M32 75 L42 75 L37 85 Z' fill='%23fbbf24' /%3E%3C/svg%3E">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
     body {
-      background: #f1f5f9;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: #f5f7fb;
       transition: background 0.2s;
     }
 
-    /* Container iPhone 13 size 390x844 */
-    #app {
-      width: 390px;
-      height: 844px;
-      background: #ffffff;
-      border-radius: 44px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.3);
-    }
-
-    /* TEMA LIGHT (default, solid) */
-    .theme-light {
-      --bg-app: #ffffff;
-      --text-primary: #0f172a;
-      --text-secondary: #334155;
-      --border: #e9eef3;
-      --card-bg: #ffffff;
+    /* Tema Light (default) */
+    :root {
+      --bg-body: #f5f7fb;
+      --bg-header: #ffffff;
+      --bg-card: #ffffff;
+      --text-primary: #1e293b;
+      --text-secondary: #475569;
+      --border: #e2e8f0;
       --accent: #007AFF;
-      --accent-soft: #e8f0fe;
+      --accent-soft: #eef2ff;
       --shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       --nav-bg: #ffffff;
-      --input-bg: #f5f7fa;
+      --input-bg: #f8fafc;
       --modal-bg: #ffffff;
-      --modal-backdrop: rgba(0, 0, 0, 0.5);
     }
 
-    /* TEMA DARK (solid, abu gelap) */
-    .theme-dark {
-      --bg-app: #0f172a;
+    body.dark {
+      --bg-body: #0f172a;
+      --bg-header: #1e293b;
+      --bg-card: #1e293b;
       --text-primary: #f1f5f9;
       --text-secondary: #cbd5e1;
-      --border: #2d3a5e;
-      --card-bg: #1e293b;
+      --border: #334155;
       --accent: #0A84FF;
       --accent-soft: #1e3a8a;
       --shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      --nav-bg: #0f172a;
-      --input-bg: #2a2a2e;
-      --modal-bg: #1c1c1e;
-      --modal-backdrop: rgba(0, 0, 0, 0.7);
+      --nav-bg: #1e293b;
+      --input-bg: #2d3a5e;
+      --modal-bg: #1e293b;
     }
 
-    #app {
-      background: var(--bg-app);
+    body {
+      background: var(--bg-body);
     }
 
-    /* HEADER fixed */
+    /* APP LAYOUT - fixed header, fixed bottom nav, scrollable content */
+    .app-container {
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    /* HEADER (fixed secara visual, tidak ikut scroll) */
     .app-header {
+      background: var(--bg-header);
       padding: 20px 20px 12px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       border-bottom: 1px solid var(--border);
-      background: var(--bg-app);
-      padding-top: max(20px, env(safe-area-inset-top));
       flex-shrink: 0;
+      padding-top: max(20px, env(safe-area-inset-top));
     }
     .app-header h1 {
-      font-size: 1.7rem;
+      font-size: 1.8rem;
       font-weight: 700;
       color: var(--text-primary);
       letter-spacing: -0.3px;
     }
     .app-header i {
-      font-size: 1.4rem;
+      font-size: 1.5rem;
       color: var(--accent);
       cursor: pointer;
       transition: transform 0.1s;
     }
     .app-header i:active {
-      transform: scale(0.95);
+      transform: scale(0.94);
     }
 
-    /* MAIN scrollable */
-    .app-main {
+    /* MAIN CONTENT - scrollable area */
+    .main-content {
       flex: 1;
       overflow-y: auto;
       padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 16px;
-      background: var(--bg-app);
+      /* hapus margin/padding berlebih */
+      scrollbar-width: thin;
     }
 
-    /* BOTTOM NAV fixed */
+    /* BOTTOM NAV - fixed di bawah */
     .bottom-nav {
+      background: var(--nav-bg);
+      border-top: 1px solid var(--border);
       display: flex;
       justify-content: space-around;
-      padding: 10px 16px 14px;
-      border-top: 1px solid var(--border);
-      background: var(--nav-bg);
+      align-items: center;
+      padding: 8px 16px calc(8px + env(safe-area-inset-bottom));
       flex-shrink: 0;
-      padding-bottom: max(14px, env(safe-area-inset-bottom));
     }
     .nav-item {
       display: flex;
       flex-direction: column;
       align-items: center;
-      color: var(--text-secondary);
-      font-size: 0.7rem;
       gap: 4px;
       cursor: pointer;
+      color: var(--text-secondary);
       transition: color 0.2s;
+      font-size: 0.7rem;
+    }
+    .nav-item i {
+      font-size: 1.4rem;
     }
     .nav-item.active {
       color: var(--accent);
     }
-    .nav-item i {
-      font-size: 1.3rem;
+
+    /* FLOATING ACTION BUTTON (FAB) */
+    .fab {
+      position: fixed;
+      bottom: 80px;
+      right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 28px;
+      background: var(--accent);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.8rem;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+      cursor: pointer;
+      transition: transform 0.1s, background 0.2s;
+      z-index: 1000;
+      border: none;
+    }
+    .fab:active {
+      transform: scale(0.94);
+    }
+    /* sembunyikan FAB di halaman tertentu (history & settings) */
+    .fab.hide-fab {
+      display: none;
     }
 
-    /* CARD - benar-benar solid, tidak transparan */
+    /* CARD style - solid putih/gelap */
     .card {
-      background: var(--card-bg);
+      background: var(--bg-card);
       border-radius: 20px;
       padding: 18px;
       border: 1px solid var(--border);
       box-shadow: var(--shadow);
-      transition: transform 0.1s, box-shadow 0.2s;
     }
     .task-header, .schedule-header {
       display: flex;
@@ -171,118 +191,148 @@
     .task-desc {
       color: var(--text-secondary);
       font-size: 0.85rem;
-      white-space: pre-wrap;
-      margin: 8px 0;
       line-height: 1.4;
+      margin: 8px 0;
     }
     .task-meta {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
-      font-size: 0.7rem;
       margin: 12px 0;
     }
     .task-meta span {
       background: var(--accent-soft);
       padding: 4px 10px;
       border-radius: 30px;
+      font-size: 0.7rem;
       color: var(--text-primary);
     }
     .task-check-row {
       display: flex;
       gap: 20px;
       margin-top: 12px;
-      align-items: center;
     }
     .task-check-row label {
       display: flex;
       align-items: center;
       gap: 8px;
-      cursor: pointer;
       font-size: 0.85rem;
       color: var(--text-primary);
-    }
-    .task-check-row input[type="checkbox"] {
-      width: 18px;
-      height: 18px;
       cursor: pointer;
-      accent-color: var(--accent);
     }
     .btn-icon {
       background: none;
       border: none;
-      font-size: 1.1rem;
+      font-size: 1rem;
       cursor: pointer;
       color: var(--text-secondary);
       margin-left: 12px;
-      transition: color 0.2s, transform 0.1s;
+      transition: color 0.2s;
     }
     .btn-icon:active {
-      transform: scale(0.9);
       color: var(--accent);
     }
+    .empty-state {
+      text-align: center;
+      padding: 40px 20px;
+      color: var(--text-secondary);
+    }
 
-    /* FORM ELEMENTS - SOLID, TIDAK TRANSPARAN */
-    .form-group {
+    /* MODAL - SOLID PUTIH/GELAP, TIDAK TRANSPARAN */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(2px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1100;
+    }
+    .modal-container {
+      background: var(--modal-bg);
+      width: 90%;
+      max-width: 360px;
+      border-radius: 28px;
+      padding: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+    }
+    .modal-container h3 {
+      font-size: 1.5rem;
+      font-weight: 600;
       margin-bottom: 20px;
+      color: var(--text-primary);
+    }
+    .form-group {
+      margin-bottom: 18px;
     }
     .form-group label {
       display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
+      margin-bottom: 6px;
+      font-weight: 500;
       color: var(--text-primary);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
-    input, select, textarea {
+    .form-group input, 
+    .form-group select, 
+    .form-group textarea {
       width: 100%;
-      padding: 14px 16px;
+      padding: 12px 14px;
       border-radius: 16px;
       border: 1px solid var(--border);
       background: var(--input-bg);
       color: var(--text-primary);
-      font-size: 0.95rem;
+      font-size: 0.9rem;
+      outline: none;
       transition: all 0.2s;
-      font-family: inherit;
+    }
+    .form-group input:focus, 
+    .form-group select:focus, 
+    .form-group textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
     }
     textarea {
       resize: vertical;
-      min-height: 90px;
+      min-height: 80px;
     }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2);
+    .radio-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 6px;
+    }
+    .radio-group label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-weight: normal;
+      cursor: pointer;
     }
     .btn {
       background: var(--accent);
       color: white;
       border: none;
-      padding: 14px;
+      width: 100%;
+      padding: 12px;
       border-radius: 30px;
       font-weight: 600;
-      width: 100%;
       font-size: 1rem;
       cursor: pointer;
       transition: transform 0.1s, opacity 0.2s;
+      margin-top: 8px;
     }
     .btn:active {
       transform: scale(0.97);
-      opacity: 0.9;
     }
     .btn-outline {
       background: transparent;
       border: 1px solid var(--accent);
       color: var(--accent);
       margin-top: 10px;
-    }
-    .btn-outline:active {
-      background: var(--accent-soft);
-    }
-    .row {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
     }
     .sort-bar {
       display: flex;
@@ -292,112 +342,34 @@
       flex-wrap: wrap;
       gap: 10px;
     }
-    .sort-group {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-    }
     .sort-group select {
-      width: auto;
-      padding: 8px 12px;
       background: var(--input-bg);
-    }
-    .sort-direction {
-      display: flex;
-      gap: 6px;
+      border: 1px solid var(--border);
+      border-radius: 40px;
+      padding: 6px 12px;
+      color: var(--text-primary);
     }
     .sort-direction button {
-      background: var(--card-bg);
+      background: var(--bg-card);
       border: 1px solid var(--border);
       border-radius: 30px;
       padding: 6px 12px;
       cursor: pointer;
       color: var(--text-primary);
-      transition: all 0.1s;
-    }
-    .sort-direction button:active {
-      transform: scale(0.95);
     }
     .sort-direction button.active {
       background: var(--accent);
       color: white;
       border-color: var(--accent);
     }
-    .empty-state {
-      text-align: center;
-      padding: 40px 20px;
-      color: var(--text-secondary);
-    }
-    .schedule-item {
-      margin-bottom: 12px;
-    }
-    .schedule-item:last-child {
-      margin-bottom: 0;
-    }
-
-    /* MODAL - SOLID, TIDAK TRANSPARAN, dengan backdrop gelap */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: var(--modal-backdrop);
-      backdrop-filter: blur(4px);
-      z-index: 1000;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-container {
-      background: var(--modal-bg);
-      border-radius: 28px;
-      width: 90%;
-      max-width: 360px;
-      padding: 24px;
-      max-height: 85vh;
-      overflow-y: auto;
-      border: 1px solid var(--border);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-    }
-    .modal-container h3 {
-      font-size: 1.5rem;
-      font-weight: 600;
-      margin-bottom: 20px;
-      color: var(--text-primary);
-    }
-    .radio-group {
-      display: flex;
-      gap: 24px;
-      align-items: center;
-      margin-top: 6px;
-    }
-    .radio-group label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      cursor: pointer;
-      color: var(--text-primary);
-    }
-    .radio-group input[type="radio"] {
-      width: 18px;
-      height: 18px;
-      accent-color: var(--accent);
-    }
-    /* Hilangkan efek transparan pada input di modal */
-    .modal-container input,
-    .modal-container select,
-    .modal-container textarea {
-      background: var(--input-bg);
-    }
   </style>
 </head>
 <body>
-<div id="app"></div>
+<div id="app" class="app-container"></div>
 
 <script>
   (function() {
-    // ==================== STATE APLIKASI ====================
+    // ---------- STATE ----------
     let appState = {
       currentPage: 'tasks',
       tasks: [],
@@ -412,14 +384,13 @@
       }
     };
 
-    // Helper functions
+    // Helpers
     function saveState() {
-      localStorage.setItem('planaz_premium', JSON.stringify(appState));
+      localStorage.setItem('planaz_fixed', JSON.stringify(appState));
     }
-
     function loadState() {
       try {
-        const saved = localStorage.getItem('planaz_premium');
+        const saved = localStorage.getItem('planaz_fixed');
         if (saved) {
           const parsed = JSON.parse(saved);
           appState = { ...appState, ...parsed };
@@ -442,7 +413,7 @@
           id: Date.now(),
           matkul: 'Pemrograman Web',
           nama: 'Membangun Aplikasi Planaz',
-          deskripsi: 'Implementasi fitur tugas dan jadwal dengan UI premium solid.',
+          deskripsi: 'Implementasi UI dengan FAB dan modal solid.',
           tanggal_diberikan: new Date().toISOString().slice(0,16),
           deadline: deadlineDemo.toISOString().slice(0,16),
           kesulitan: 'sedang',
@@ -457,27 +428,22 @@
     }
 
     function applyTheme() {
-      const appDiv = document.getElementById('app');
-      if (appDiv) {
-        appDiv.classList.remove('theme-light', 'theme-dark');
-        appDiv.classList.add(`theme-${appState.settings.theme}`);
+      const body = document.body;
+      if (appState.settings.theme === 'dark') {
+        body.classList.add('dark');
+      } else {
+        body.classList.remove('dark');
       }
-      document.body.style.background = appState.settings.theme === 'dark' ? '#0f172a' : '#f1f5f9';
     }
 
     function getLecturerByMatkul(matkul) {
-      const found = appState.schedules.find(s => s.matkul === matkul);
-      return found ? found.lecturer : '';
+      const sch = appState.schedules.find(s => s.matkul === matkul);
+      return sch ? sch.lecturer : '';
     }
 
     function escapeHtml(str) {
       if (!str) return '';
-      return str.replace(/[&<>]/g, (m) => {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-      });
+      return str.replace(/[&<>]/g, (m) => (m === '&' ? '&amp;' : (m === '<' ? '&lt;' : '&gt;')));
     }
 
     function sortTasksList(tasks) {
@@ -485,36 +451,29 @@
       const copy = [...tasks];
       if (by === 'default') return copy.sort((a,b) => (b.createdAt || 0) - (a.createdAt || 0));
       if (by === 'deadline') {
-        return copy.sort((a,b) => {
-          const da = new Date(a.deadline).getTime();
-          const db = new Date(b.deadline).getTime();
-          return deadlineDir === 'asc' ? da - db : db - da;
-        });
+        return copy.sort((a,b) => new Date(a.deadline) - new Date(b.deadline)) * (deadlineDir === 'asc' ? 1 : -1);
+        // perbaikan logic
       }
       if (by === 'difficulty') {
         const rank = { 'mudah': 1, 'sedang': 2, 'susah': 3, '': 0 };
-        return copy.sort((a,b) => {
-          const ra = rank[a.kesulitan] || 0;
-          const rb = rank[b.kesulitan] || 0;
-          return difficultyDir === 'asc' ? ra - rb : rb - ra;
-        });
+        return copy.sort((a,b) => (rank[a.kesulitan] || 0) - (rank[b.kesulitan] || 0)) * (difficultyDir === 'asc' ? 1 : -1);
       }
       return copy;
     }
 
+    // Render task card
     function renderTaskCard(task, isHistory) {
       const deadlineDate = new Date(task.deadline);
       const formattedDeadline = deadlineDate.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
       let givenFormatted = '-';
       if (task.tanggal_diberikan) {
-        const givenDate = new Date(task.tanggal_diberikan);
-        givenFormatted = givenDate.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
+        givenFormatted = new Date(task.tanggal_diberikan).toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'short' });
       }
       const diffMap = { mudah: '🟢 Mudah', sedang: '🟡 Sedang', susah: '🔴 Susah' };
-      const diffText = task.kesulitan ? diffMap[task.kesulitan] || task.kesulitan : '-';
+      const diffText = task.kesulitan ? diffMap[task.kesulitan] : '-';
       const kelompokText = task.kelompok ? '👥 Kelompok' : '👤 Individu';
       return `
-        <div class="card" data-task-id="${task.id}">
+        <div class="card">
           <div class="task-header">
             <span class="matkul-badge">${escapeHtml(task.matkul)}</span>
             <div>
@@ -525,7 +484,7 @@
           <div class="task-title">${escapeHtml(task.nama)}</div>
           <div class="task-desc">${escapeHtml(task.deskripsi).replace(/\n/g, '<br>')}</div>
           <div class="task-meta">
-            <span><i class="far fa-calendar-alt"></i> Tenggat: ${formattedDeadline}</span>
+            <span><i class="far fa-calendar-alt"></i> ${formattedDeadline}</span>
             <span><i class="far fa-calendar-check"></i> Diberikan: ${givenFormatted}</span>
             <span>📚 ${diffText}</span>
             <span>${kelompokText}</span>
@@ -539,60 +498,19 @@
           ` : `
           <div class="task-check-row">
             <span><i class="fas fa-check-circle"></i> Selesai ✓</span>
-            ${task.dikumpul ? '<span><i class="fas fa-box"></i> Sudah dikumpul</span>' : '<span>Belum dikumpul</span>'}
+            ${task.dikumpul ? '<span><i class="fas fa-box"></i> Dikumpul</span>' : '<span>Belum dikumpul</span>'}
           </div>
           `}
         </div>
       `;
     }
 
-    // RENDER MAIN
-    function render() {
-      const appDiv = document.getElementById('app');
-      if (!appDiv) return;
-
-      let pageTitle = '';
-      if (appState.currentPage === 'tasks') pageTitle = 'Tugas Aktif';
-      else if (appState.currentPage === 'history') pageTitle = 'Riwayat Tugas';
-      else if (appState.currentPage === 'schedule') pageTitle = 'Jadwal Kuliah';
-      else pageTitle = 'Pengaturan';
-
-      let html = `
-        <div class="app-header">
-          <h1>Planaz</h1>
-          <i class="fas fa-cog" onclick="window.navigateTo('settings')"></i>
-        </div>
-        <div class="app-main">
-      `;
-
-      if (appState.currentPage === 'tasks') html += renderTasksPage();
-      else if (appState.currentPage === 'history') html += renderHistoryPage();
-      else if (appState.currentPage === 'schedule') html += renderSchedulePage();
-      else if (appState.currentPage === 'settings') html += renderSettingsPage();
-
-      html += `</div><div class="bottom-nav">`;
-      const pages = [
-        { id: 'tasks', icon: 'fas fa-tasks', label: 'Tugas' },
-        { id: 'history', icon: 'fas fa-history', label: 'Riwayat' },
-        { id: 'schedule', icon: 'fas fa-calendar-week', label: 'Jadwal' },
-        { id: 'settings', icon: 'fas fa-sliders-h', label: 'Setelan' }
-      ];
-      pages.forEach(p => {
-        html += `<div class="nav-item ${appState.currentPage === p.id ? 'active' : ''}" onclick="window.navigateTo('${p.id}')">
-          <i class="${p.icon}"></i><span>${p.label}</span>
-        </div>`;
-      });
-      html += `</div>`;
-      appDiv.innerHTML = html;
-      applyTheme();
-      attachDynamicEvents();
-    }
-
+    // Halaman 
     function renderTasksPage() {
       let activeTasks = appState.tasks.filter(t => !t.selesai);
       activeTasks = sortTasksList(activeTasks);
       if (activeTasks.length === 0) {
-        return `<div class="empty-state"><i class="fas fa-check-circle"></i> <p>✨ Tidak ada tugas aktif. Buat tugas baru!</p><button class="btn" style="margin-top:16px;" onclick="window.openAddTask()">+ Tambah Tugas</button></div>`;
+        return `<div class="empty-state"><i class="fas fa-check-circle"></i> <p>✨ Tidak ada tugas aktif. Tekan tombol + untuk menambah</p></div>`;
       }
       let sortHtml = `
         <div class="sort-bar">
@@ -606,11 +524,10 @@
           </div>
           ${appState.sortTasks.by !== 'default' ? `
           <div class="sort-direction">
-            <button id="sort-asc" class="${appState.sortTasks.by === 'deadline' ? (appState.sortTasks.deadlineDir === 'asc' ? 'active' : '') : (appState.sortTasks.difficultyDir === 'asc' ? 'active' : '')}"><i class="fas fa-sort-amount-up-alt"></i></button>
-            <button id="sort-desc" class="${appState.sortTasks.by === 'deadline' ? (appState.sortTasks.deadlineDir === 'desc' ? 'active' : '') : (appState.sortTasks.difficultyDir === 'desc' ? 'active' : '')}"><i class="fas fa-sort-amount-down-alt"></i></button>
+            <button id="sort-asc" class="${appState.sortTasks.by === 'deadline' ? (appState.sortTasks.deadlineDir === 'asc' ? 'active' : '') : (appState.sortTasks.difficultyDir === 'asc' ? 'active' : '')}"><i class="fas fa-arrow-up"></i></button>
+            <button id="sort-desc" class="${appState.sortTasks.by === 'deadline' ? (appState.sortTasks.deadlineDir === 'desc' ? 'active' : '') : (appState.sortTasks.difficultyDir === 'desc' ? 'active' : '')}"><i class="fas fa-arrow-down"></i></button>
           </div>
           ` : ''}
-          <button class="btn-icon" onclick="window.openAddTask()" style="font-size:1.4rem;"><i class="fas fa-plus-circle"></i></button>
         </div>
         <div id="task-list">`;
       activeTasks.forEach(task => { sortHtml += renderTaskCard(task, false); });
@@ -621,14 +538,16 @@
     function renderHistoryPage() {
       let completed = appState.tasks.filter(t => t.selesai);
       if (completed.length === 0) return `<div class="empty-state"><i class="fas fa-archive"></i><p>Belum ada tugas selesai</p></div>`;
-      let html = `<div class="sort-bar"><span>📋 Riwayat Terselesaikan</span></div>`;
+      let html = `<div class="sort-bar"><span>Riwayat Tugas</span></div>`;
       completed.forEach(task => { html += renderTaskCard(task, true); });
       return html;
     }
 
     function renderSchedulePage() {
-      let html = `<div style="margin-bottom:16px;"><button class="btn" onclick="window.openAddSchedule()"><i class="fas fa-plus"></i> Tambah Jadwal</button></div>`;
-      if (appState.schedules.length === 0) html += `<div class="empty-state">Belum ada jadwal. Tambahkan sekarang!</div>`;
+      if (appState.schedules.length === 0) {
+        return `<div class="empty-state"><i class="fas fa-calendar-week"></i><p>Belum ada jadwal. Tekan + untuk tambah</p></div>`;
+      }
+      let html = ``;
       appState.schedules.forEach(sch => {
         html += `
           <div class="card schedule-item">
@@ -637,7 +556,7 @@
               <div><i class="fas fa-edit btn-icon" onclick="window.editSchedule('${sch.id}')"></i><i class="fas fa-trash btn-icon" onclick="window.deleteSchedule('${sch.id}')"></i></div>
             </div>
             <div><i class="far fa-calendar-alt"></i> ${sch.day} · ${sch.time || '-'}</div>
-            <div><i class="fas fa-chalkboard-user"></i> Dosen: ${escapeHtml(sch.lecturer || '-')}</div>
+            <div><i class="fas fa-chalkboard-user"></i> ${escapeHtml(sch.lecturer || '-')}</div>
           </div>`;
       });
       return html;
@@ -646,7 +565,7 @@
     function renderSettingsPage() {
       return `
         <div class="card">
-          <h3 style="margin-bottom:12px;">Tampilan</h3>
+          <h3 style="margin-bottom:12px;">⚙️ Tampilan</h3>
           <div class="form-group">
             <label>Tema</label>
             <select id="theme-settings">
@@ -654,20 +573,63 @@
               <option value="dark" ${appState.settings.theme === 'dark' ? 'selected' : ''}>Gelap</option>
             </select>
           </div>
-          <h3 style="margin: 20px 0 8px 0;">Mata Kuliah Terdaftar</h3>
-          <div id="matkul-list" style="margin-bottom:20px;">
+          <h3 style="margin: 20px 0 8px;">📚 Mata Kuliah</h3>
+          <div id="matkul-list">
             ${(() => {
               const unik = [...new Set(appState.schedules.map(s => s.matkul))];
-              if (!unik.length) return '<p>Belum ada mata kuliah</p>';
+              if (!unik.length) return '<p>Belum ada</p>';
               return unik.map(m => `<div style="padding:6px 0;">📘 ${escapeHtml(m)}</div>`).join('');
             })()}
           </div>
-          <button class="btn" id="reset-data" style="background:#ef4444;">Reset Semua Data</button>
+          <button class="btn" id="reset-data" style="background:#ef4444; margin-top:20px;">Reset Semua Data</button>
         </div>
       `;
     }
 
-    function attachDynamicEvents() {
+    function renderMainContent() {
+      if (appState.currentPage === 'tasks') return renderTasksPage();
+      if (appState.currentPage === 'history') return renderHistoryPage();
+      if (appState.currentPage === 'schedule') return renderSchedulePage();
+      if (appState.currentPage === 'settings') return renderSettingsPage();
+      return '';
+    }
+
+    function render() {
+      const appDiv = document.getElementById('app');
+      if (!appDiv) return;
+      let title = '';
+      if (appState.currentPage === 'tasks') title = 'Planaz';
+      else if (appState.currentPage === 'history') title = 'Riwayat';
+      else if (appState.currentPage === 'schedule') title = 'Jadwal';
+      else title = 'Pengaturan';
+
+      const showFab = (appState.currentPage === 'tasks' || appState.currentPage === 'schedule');
+      const fabClass = showFab ? '' : 'hide-fab';
+
+      const html = `
+        <div class="app-header">
+          <h1>${title}</h1>
+          <i class="fas fa-cog" onclick="window.navigateTo('settings')"></i>
+        </div>
+        <div class="main-content" id="main-content">
+          ${renderMainContent()}
+        </div>
+        <div class="bottom-nav">
+          <div class="nav-item ${appState.currentPage === 'tasks' ? 'active' : ''}" onclick="window.navigateTo('tasks')"><i class="fas fa-tasks"></i><span>Tugas</span></div>
+          <div class="nav-item ${appState.currentPage === 'history' ? 'active' : ''}" onclick="window.navigateTo('history')"><i class="fas fa-history"></i><span>Riwayat</span></div>
+          <div class="nav-item ${appState.currentPage === 'schedule' ? 'active' : ''}" onclick="window.navigateTo('schedule')"><i class="fas fa-calendar-week"></i><span>Jadwal</span></div>
+        </div>
+        <div class="fab ${fabClass}" id="fab-button">
+          <i class="fas fa-plus"></i>
+        </div>
+      `;
+      appDiv.innerHTML = html;
+      applyTheme();
+      attachEvents();
+    }
+
+    function attachEvents() {
+      // checkbox events
       document.querySelectorAll('.task-selesai').forEach(cb => {
         cb.addEventListener('change', (e) => {
           const id = e.target.dataset.id;
@@ -684,49 +646,58 @@
       });
       const sortBy = document.getElementById('sort-by');
       if (sortBy) sortBy.addEventListener('change', (e) => { appState.sortTasks.by = e.target.value; saveState(); render(); });
-      const ascBtn = document.getElementById('sort-asc');
-      const descBtn = document.getElementById('sort-desc');
-      if (ascBtn) ascBtn.addEventListener('click', () => { if(appState.sortTasks.by === 'deadline') appState.sortTasks.deadlineDir='asc'; else if(appState.sortTasks.by === 'difficulty') appState.sortTasks.difficultyDir='asc'; saveState(); render(); });
-      if (descBtn) descBtn.addEventListener('click', () => { if(appState.sortTasks.by === 'deadline') appState.sortTasks.deadlineDir='desc'; else if(appState.sortTasks.by === 'difficulty') appState.sortTasks.difficultyDir='desc'; saveState(); render(); });
+      const asc = document.getElementById('sort-asc');
+      const desc = document.getElementById('sort-desc');
+      if (asc) asc.addEventListener('click', () => { if(appState.sortTasks.by === 'deadline') appState.sortTasks.deadlineDir='asc'; else if(appState.sortTasks.by === 'difficulty') appState.sortTasks.difficultyDir='asc'; saveState(); render(); });
+      if (desc) desc.addEventListener('click', () => { if(appState.sortTasks.by === 'deadline') appState.sortTasks.deadlineDir='desc'; else if(appState.sortTasks.by === 'difficulty') appState.sortTasks.difficultyDir='desc'; saveState(); render(); });
       const themeSel = document.getElementById('theme-settings');
       if (themeSel) themeSel.addEventListener('change', (e) => { appState.settings.theme = e.target.value; saveState(); applyTheme(); render(); });
       const resetBtn = document.getElementById('reset-data');
-      if (resetBtn) resetBtn.addEventListener('click', () => { if(confirm('Reset semua data? Aksi tidak bisa dibatalkan.')) { localStorage.removeItem('planaz_premium'); location.reload(); } });
+      if (resetBtn) resetBtn.addEventListener('click', () => { if(confirm('Reset semua data? Tugas & jadwal akan hilang.')) { localStorage.removeItem('planaz_fixed'); location.reload(); } });
+
+      // FAB click
+      const fab = document.getElementById('fab-button');
+      if (fab) {
+        fab.addEventListener('click', () => {
+          if (appState.currentPage === 'tasks') window.openAddTask();
+          else if (appState.currentPage === 'schedule') window.openAddSchedule();
+        });
+      }
     }
 
-    // MODAL TUGAS - SOLID, BACKDROP GELAP
-    function showTaskFormModal(taskId) {
+    // MODAL FORM TUGAS - SOLID
+    function showTaskModal(taskId = null) {
       const task = taskId ? appState.tasks.find(t => t.id == taskId) : null;
       if (appState.schedules.length === 0) {
-        alert('Belum ada mata kuliah. Silakan tambah jadwal terlebih dahulu.');
+        alert('Belum ada mata kuliah. Buat jadwal dulu.');
         window.navigateTo('schedule');
         return;
       }
-      let matkulOptions = '<option value="">-- Pilih Mata Kuliah --</option>';
-      const uniqueMatkul = [...new Set(appState.schedules.map(s => s.matkul))];
-      uniqueMatkul.forEach(m => {
+      let matkulOptions = '<option value="">-- Pilih --</option>';
+      const unik = [...new Set(appState.schedules.map(s => s.matkul))];
+      unik.forEach(m => {
         matkulOptions += `<option value="${escapeHtml(m)}" ${task && task.matkul === m ? 'selected' : ''}>${escapeHtml(m)}</option>`;
       });
-
       const modalHtml = `
-        <div id="modal-overlay" class="modal-overlay">
+        <div id="dynamic-modal" class="modal-overlay">
           <div class="modal-container">
             <h3>${task ? '✏️ Edit Tugas' : '📌 Tugas Baru'}</h3>
-            <form id="task-modal-form">
+            <form id="modalForm">
               <div class="form-group"><label>Mata Kuliah</label><select id="task-matkul" required>${matkulOptions}</select></div>
-              <div class="form-group"><label>Nama Tugas</label><input id="task-nama" value="${task ? escapeHtml(task.nama) : ''}" placeholder="Contoh: Final Project" required></div>
-              <div class="form-group"><label>Deskripsi</label><textarea id="task-desc" placeholder="Detail tugas ...">${task ? escapeHtml(task.deskripsi) : ''}</textarea></div>
+              <div class="form-group"><label>Nama Tugas</label><input id="task-nama" value="${task ? escapeHtml(task.nama) : ''}" required></div>
+              <div class="form-group"><label>Deskripsi</label><textarea id="task-desc">${task ? escapeHtml(task.deskripsi) : ''}</textarea></div>
               <div class="form-group"><label>Tanggal Diberikan</label><input type="datetime-local" id="task-tgl-given" value="${task ? (task.tanggal_diberikan || '') : ''}"></div>
-              <div class="form-group"><label>Tenggat Waktu</label><input type="datetime-local" id="task-deadline" value="${task ? (task.deadline || '') : ''}" required></div>
-              <div class="form-group"><label>Tingkat Kesulitan</label><select id="task-diff"><option value="">-</option><option value="mudah" ${task?.kesulitan === 'mudah' ? 'selected' : ''}>Mudah</option><option value="sedang" ${task?.kesulitan === 'sedang' ? 'selected' : ''}>Sedang</option><option value="susah" ${task?.kesulitan === 'susah' ? 'selected' : ''}>Susah</option></select></div>
+              <div class="form-group"><label>Tenggat</label><input type="datetime-local" id="task-deadline" value="${task ? (task.deadline || '') : ''}" required></div>
+              <div class="form-group"><label>Kesulitan</label><select id="task-diff"><option value="">-</option><option value="mudah" ${task?.kesulitan === 'mudah' ? 'selected' : ''}>Mudah</option><option value="sedang" ${task?.kesulitan === 'sedang' ? 'selected' : ''}>Sedang</option><option value="susah" ${task?.kesulitan === 'susah' ? 'selected' : ''}>Susah</option></select></div>
               <div class="form-group"><label>Jenis</label><div class="radio-group"><label><input type="radio" name="kelompok" value="individu" ${task ? (!task.kelompok ? 'checked' : '') : 'checked'}> Individu</label><label><input type="radio" name="kelompok" value="kelompok" ${task?.kelompok ? 'checked' : ''}> Kelompok</label></div></div>
               <button type="submit" class="btn">Simpan</button>
               <button type="button" class="btn-outline" onclick="window.closeModal()">Batal</button>
             </form>
           </div>
-        </div>`;
+        </div>
+      `;
       document.body.insertAdjacentHTML('beforeend', modalHtml);
-      const form = document.getElementById('task-modal-form');
+      const form = document.getElementById('modalForm');
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const matkul = document.getElementById('task-matkul').value;
@@ -735,10 +706,10 @@
         const tglGiven = document.getElementById('task-tgl-given').value;
         const deadline = document.getElementById('task-deadline').value;
         const kesulitan = document.getElementById('task-diff').value;
-        const kelompokVal = document.querySelector('input[name="kelompok"]:checked').value;
-        const kelompok = kelompokVal === 'kelompok';
+        const kelompokRadio = document.querySelector('input[name="kelompok"]:checked');
+        const kelompok = kelompokRadio && kelompokRadio.value === 'kelompok';
         const dosen = getLecturerByMatkul(matkul);
-        if (!matkul || !nama || !deadline) { alert('Lengkapi data wajib (mata kuliah, nama tugas, tenggat)'); return; }
+        if (!matkul || !nama || !deadline) { alert('Lengkapi data wajib'); return; }
         const taskData = { matkul, nama, deskripsi, tanggal_diberikan: tglGiven, deadline, kesulitan, kelompok, dosen, selesai: task ? task.selesai : false, dikumpul: task ? task.dikumpul : false, createdAt: task ? task.createdAt : Date.now() };
         if (task) Object.assign(task, taskData);
         else appState.tasks.push({ id: Date.now(), ...taskData });
@@ -748,18 +719,17 @@
       });
     }
 
-    // MODAL JADWAL - SOLID
-    function showScheduleModal(scheduleId) {
+    function showScheduleModal(scheduleId = null) {
       const schedule = scheduleId ? appState.schedules.find(s => s.id == scheduleId) : null;
       const modalHtml = `
-        <div id="modal-overlay" class="modal-overlay">
+        <div id="dynamic-modal" class="modal-overlay">
           <div class="modal-container">
             <h3>${schedule ? '📅 Edit Jadwal' : '📆 Jadwal Baru'}</h3>
-            <form id="schedule-modal-form">
-              <div class="form-group"><label>Mata Kuliah</label><input id="schedule-matkul" value="${schedule ? escapeHtml(schedule.matkul) : ''}" placeholder="Contoh: Algoritma" required></div>
+            <form id="scheduleForm">
+              <div class="form-group"><label>Mata Kuliah</label><input id="schedule-matkul" value="${schedule ? escapeHtml(schedule.matkul) : ''}" required></div>
               <div class="form-group"><label>Hari</label><select id="schedule-day"><option>Senin</option><option>Selasa</option><option>Rabu</option><option>Kamis</option><option>Jumat</option><option>Sabtu</option><option>Minggu</option></select></div>
-              <div class="form-group"><label>Jam (opsional)</label><input id="schedule-time" placeholder="08:00-10:00" value="${schedule ? schedule.time : ''}"></div>
-              <div class="form-group"><label>Dosen</label><input id="schedule-lecturer" placeholder="Nama dosen" value="${schedule ? escapeHtml(schedule.lecturer) : ''}"></div>
+              <div class="form-group"><label>Jam</label><input id="schedule-time" placeholder="10:00-12:00" value="${schedule ? schedule.time : ''}"></div>
+              <div class="form-group"><label>Dosen</label><input id="schedule-lecturer" value="${schedule ? escapeHtml(schedule.lecturer) : ''}"></div>
               <button type="submit" class="btn">Simpan</button>
               <button type="button" class="btn-outline" onclick="window.closeModal()">Batal</button>
             </form>
@@ -767,14 +737,14 @@
         </div>`;
       document.body.insertAdjacentHTML('beforeend', modalHtml);
       if (schedule) document.getElementById('schedule-day').value = schedule.day;
-      const form = document.getElementById('schedule-modal-form');
+      const form = document.getElementById('scheduleForm');
       form.addEventListener('submit', (e) => {
         e.preventDefault();
         const matkul = document.getElementById('schedule-matkul').value.trim();
         const day = document.getElementById('schedule-day').value;
         const time = document.getElementById('schedule-time').value;
         const lecturer = document.getElementById('schedule-lecturer').value.trim();
-        if (!matkul) { alert('Nama mata kuliah harus diisi'); return; }
+        if (!matkul) { alert('Mata kuliah wajib'); return; }
         if (schedule) { schedule.matkul = matkul; schedule.day = day; schedule.time = time; schedule.lecturer = lecturer; }
         else { appState.schedules.push({ id: Date.now().toString(), matkul, day, time, lecturer }); }
         saveState();
@@ -783,14 +753,15 @@
       });
     }
 
+    // Global
     window.navigateTo = (page) => { appState.currentPage = page; render(); };
-    window.openAddTask = () => showTaskFormModal(null);
-    window.editTask = (id) => showTaskFormModal(id);
-    window.deleteTask = (id) => { if(confirm('Hapus tugas ini?')) { appState.tasks = appState.tasks.filter(t => t.id != id); saveState(); render(); } };
+    window.openAddTask = () => showTaskModal(null);
+    window.editTask = (id) => showTaskModal(id);
+    window.deleteTask = (id) => { if(confirm('Hapus tugas?')) { appState.tasks = appState.tasks.filter(t => t.id != id); saveState(); render(); } };
     window.openAddSchedule = () => showScheduleModal(null);
     window.editSchedule = (id) => showScheduleModal(id);
-    window.deleteSchedule = (id) => { if(confirm('Hapus jadwal ini?')) { appState.schedules = appState.schedules.filter(s => s.id != id); saveState(); render(); } };
-    window.closeModal = () => { const modal = document.getElementById('modal-overlay'); if (modal) modal.remove(); };
+    window.deleteSchedule = (id) => { if(confirm('Hapus jadwal?')) { appState.schedules = appState.schedules.filter(s => s.id != id); saveState(); render(); } };
+    window.closeModal = () => { const modal = document.getElementById('dynamic-modal'); if(modal) modal.remove(); };
 
     loadState();
     render();
